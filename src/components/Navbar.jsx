@@ -251,7 +251,6 @@ const Navbar = () => {
 
 
 
-
       <div className="relative group">
                 <NavLink  to="/news" className={({ isActive }) => 
                 `relative py-2 transition-colors duration-300 after:absolute
@@ -360,16 +359,16 @@ const Navbar = () => {
                 
               </div>
 
-        <FaSearch className="cursor-pointer transition " />
+        <FaSearch className="cursor-pointer text-2xl transition " />
 
-        <FaShoppingCart className="cursor-pointer transition " />
+        <FaShoppingCart className="cursor-pointer text-2xl transition " />
 
-        <Buttons
-          text="Get A Quote"
-          color="red"
-          size="medium"
-          variant="primary"
-          />
+       
+          <Buttons
+                text="Get A Quote"
+              size="medium"
+              variant="primary"
+            />
 
         <Call />
 

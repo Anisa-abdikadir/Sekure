@@ -4,19 +4,20 @@ const Buttons = ({
   variant = "primary",
   size = "medium",
   onClick,
+  
 }) => {
   const sizes = {
     small: "px-3 py-1 text-sm",
-    medium: "px-4 py-3 text-base",
-    large: "px-7 py-3 text-lg",
+    medium: "px-5 py-5 text-base",
+    large: "px-18 py-5 text-lg",
   };
 
   const variants = {
     primary:
-      "bg-[#FBFBFB] text-black hover:bg-[#65B530]",
+      "bg-[#FBFBFB] text-black hover:text-white hover:bg-[#65B530]",
 
     secondary:
-      "bg-[#3770A8] text-white hover:bg-[#2E3C54]",
+      "bg-[#65B530] text-white hover:bg-[#1B1A1A]",
 
     outline:
       "border border-[#3770A8] text-white hover:bg-[#3770A8] hover:text-white",
