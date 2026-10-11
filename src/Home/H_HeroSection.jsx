@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { asset } from "../assets/asset";
 import Buttons from "../components/Buttons";
+import { motion ,AnimatePresence } from "framer-motion";
 
 const H_HeroSection = () => {
  const imges = [
@@ -30,7 +31,7 @@ const H_HeroSection = () => {
   const nextImge = () => {
     setcurrentImage((prev) => {
       if (prev === imges.length - 1) {
-        return 0;
+        return prev;
       }
 
       return prev + 1;
@@ -41,7 +42,7 @@ const H_HeroSection = () => {
   const prevImge = () => {
     setcurrentImage((prev) => {
       if (prev === 0) {
-        return imges.length - 1;
+        return prev;
       }
 
       return prev - 1;
@@ -49,17 +50,38 @@ const H_HeroSection = () => {
   };
 
   return (
-    <div className="">
-<section className="relative w-full h-175 lg:h-205 overflow-hidden">
-      <img src={imges[currentImage].image}
-        alt="Security system" className="absolute inset-0 w-full h-full object-cover"/>
+    <div id="hero">
+    <section className="relative  overflow-hidden">
+     <AnimatePresence mode="wait">
+        <motion.img
+          key={currentImage}
+          src={imges[currentImage].image}
+          alt="Security system"
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full object-cover" />
+        </AnimatePresence>
 
       <div className=" absolute  inset-0  z-10 bg-linear-to-r from-black/70 via-black/45 to-black/10" />
 
-      <div className=" absolute top-28 left-0 w-full h-px bg-white/30 z-30" />
+        <div className="mx-auto max-w-7xl ">
+           <div className=" relative  z-30 min-h-screen flex items-start pt-32 sm:pt-36 lg:pt-50 px-6 sm:px-10 lg:px-20 ">
 
-      <div className=" relative z-30 min-h-screen flex items-start pt-32 sm:pt-36 lg:pt-50 px-6 sm:px-10 lg:px-20 ">
-        <div className="max-w-4xl text-white">
+        <AnimatePresence mode="wait">
+      <motion.div
+        key={currentImage}
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -50 }}
+        transition={{
+          duration: 0.6,
+          ease: "easeOut",
+        }}
+        className="text-white"
+      >
+        
 
          <h3 className="text-sm sm:text-lg lg:text-md font-bold leading-tight">
           {imges[currentImage].smallTitle}
@@ -69,11 +91,11 @@ const H_HeroSection = () => {
           {imges[currentImage].title}
         </h1>
 
-        <p className="mt-10 max-w-3xl text-sm sm:text-base lg:text-xl font-medium leading-relaxed text-white">
+        <p className="mt-10 max-w-2xl text-sm sm:text-sm lg:text-xl font-medium  text-white">
           {imges[currentImage].description}
         </p>
 
-          <div className=" relative mt-10 bottom-5 z-50 mt-8 flex flex-wrap items-center gap-4" >
+          <div className=" relative bottom-5 z-50 mt-15 flex flex-wrap items-center gap-4" >
             <Buttons
               text="Explore Our Services"
               size="large"
@@ -87,7 +109,8 @@ const H_HeroSection = () => {
             />
           </div>
 
-        </div>
+        </motion.div>
+        </AnimatePresence>
       </div>
 
       <button
@@ -124,7 +147,9 @@ const H_HeroSection = () => {
           />
         ))}
       </div>
-
+        </div>
+     
+      
     </section>
     </div>
   );

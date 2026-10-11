@@ -1,381 +1,918 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaSearch, FaShoppingCart } from "react-icons/fa";
-import { asset } from "../assets/asset";
-import Buttons from "./Buttons";
-import Call from "./Call";
+import {
+  FaSearch,
+  FaShoppingCart,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FaArrowRight } from "react-icons/fa6";
 
+import { asset } from "../assets/asset";
+import Buttons from "./Buttons";
+import Amingping from "./Amingping";
+import { IoIosCall  } from "react-icons/io";
+import logo from "../assets/logo-ontop.png";
+import logoBlack from "../assets/logo-black.png"
 
 
 const Navbar = () => {
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+
+  const [openMenu, setOpenMenu] = useState(null);
+
+  const [mobileMenu, setMobileMenu] = useState(false);
+
+  // Mobile dropdown
+  const [mobileDropdown, setMobileDropdown] = useState(null);
+
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Navbar background
+      setScrolled(currentScrollY > 50);
+
+      // Hide navbar when scrolling down
+      if (
+        currentScrollY > lastScrollY.current &&
+        currentScrollY > 100
+      ) {
+        setShowNavbar(false);
+      } else {
+        // Show navbar when scrolling up
+        setShowNavbar(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Close mobile menu
+  const closeMobileMenu = () => {
+    setMobileMenu(false);
+    setMobileDropdown(null);
+  };
+
+  // mobile dropdown
+  const toggleMobileDropdown = (menu) => {
+    setMobileDropdown(
+      mobileDropdown === menu ? null : menu
+    );
+  };
+
+  const toggleDesktopDropdown = (menu) => {
+    setOpenMenu(openMenu === menu ? null : menu);
+  };
+
   return (
-    <div className="relative w-full">
+    <header
+      className={`
+        fixed top-0 left-0 z-50 w-full
+        transition-all duration-500 ease-in-out
 
+        ${showNavbar ? "translate-y-0" : "-translate-y-full"}
 
-      <img
-        src={asset.logo}alt="Logo" className="absolute left-8 top-6 z-20 w-32 object-contain" />
-      <nav className="absolute right-8 font-bold text-sm top-6 z-20 flex items-center gap-6 text-white">
+        ${
+          scrolled
+            ? "bg-white shadow-md"
+            : "bg-transparent"
+        }
+      `}
+      
+    >
+      <div className="w-full px-5 sm:px-8 lg:px-10 xl:px-12">
+        <div className="relative flex h-20 sm:h-24 items-center justify-between">
 
-         <div className="relative group">
           <NavLink
             to="/"
-            className={({ isActive }) =>
-              `relative py-2 flex items-center gap-0.5 after:absolute after:left-0 after:-bottom-8 after:h-0.5 after:bg-green-500
-              ${
-                isActive
-                  ? "after:w-full"
-                  : "after:w-0 hover:after:w-full"
-              }`
-            }
+            onClick={closeMobileMenu}
+            className="shrink-0"
           >
-            Home
-            <RiArrowDropDownLine className="text-2xl" />
+            <img
+              src={scrolled ? logoBlack :logo}
+              alt="Sekure" className=" w-24 sm:w-28 lg:w-32 object-contain"
+              />
           </NavLink>
 
-          <div className=" absolute top-10 left-0 w-60 bg-white px-8 py-6 shadow-lg opacity-0 invisible translate-y-2
-              transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-            <NavLink to="/home-modern"
-              className=" group/home-modern flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/home-modern:opacity-100
-                  group-hover/home-modern:translate-x-0"/>
-              Home Modern
-            </NavLink>
 
-            <NavLink to="/home-classic"
-                className=" group/home-classic flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/home-classic:opacity-100
-                  group-hover/home-classic:translate-x-0"/>
-              Home Classic
-            </NavLink>
+          <nav className={` hidden lg:flex items-center gap-4 xl:gap-6 font-bold
+              text-sm transition-colors duration-300
 
-            <NavLink to="/home-products"
-                 className=" group/home-products flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/home-products:opacity-100
-                  group-hover/home-products:translate-x-0"/>
-              Home Products
-            </NavLink>
-          </div>
-        </div>
-
-       <div className="relative group">
-         <NavLink  to="/company" className={({ isActive }) => 
-            `relative py-2 transition-colors flex  items-center  duration-300 after:absolute 
-            after:left-0 after:-bottom-8 after:h-0.5 after:bg-green-500 after:transition-all after:duration-300
-            ${
-              isActive
-                ? "text-green-500 after:w-full"
-                : "after:w-0  hover:after:w-full"
-            }`
-          }>
-            Company
-            <span><RiArrowDropDownLine className="text-xl " /></span>
-
-          </NavLink>
-
-          <div className="
-              absolute top-full left-0 w-60 bg-white px-8 py-6 shadow-lg
-              opacity-0 invisible translate-y-2
-              transition-all duration-300
-              group-hover:opacity-100
-              group-hover:visible
-              group-hover:translate-y-0">
-
-            <NavLink to="/About"
-                 className=" group/About flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/About:opacity-100
-                  group-hover/About:translate-x-0"/>
-              About Us
-            </NavLink>
-             <NavLink to="/How"
-                 className=" group/How flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/How:opacity-100
-                  group-hover/How:translate-x-0"/>
-              How It Works
-            </NavLink>
-             <NavLink to="/leader"
-                 className=" group/leader flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/leader:opacity-100
-                  group-hover/leader:translate-x-0"/>
-            Leadership Team
-            </NavLink>
-             <NavLink to="/Customers"
-                 className=" group/Customers flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Customers:opacity-100
-                  group-hover/Customers:translate-x-0"/>
-              Customers' Reviews
-            </NavLink>
-             
-            <NavLink to="/location"
-                 className=" group/location flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/location:opacity-100
-                  group-hover/location:translate-x-0"/>
-            Out Location
-            </NavLink>
-          </div>
-
-       </div>
-       
-
-
-           <div className="relative group">
-            <NavLink
-              to="/services"
-              className={({ isActive }) =>
-                `relative py-2 transition-colors flex items-center duration-300
-                after:absolute after:left-0 after:-bottom-8 after:h-0.5
-                after:bg-green-500 after:transition-all after:duration-300
-                ${
-                  isActive
-                    ? "text-green-500 after:w-full"
-                    : "after:w-0 hover:after:w-full"
-                }`
+              ${
+                scrolled
+                  ? "text-gray-900"
+                  : "text-white"
               }
+            `}
+          >
+
+
+            <div
+              className="relative group"
+              onMouseEnter={() => setOpenMenu("home")}
+              onMouseLeave={() => setOpenMenu(null)}
             >
-              Services & Industries
-              <RiArrowDropDownLine className="text-2xl" />
-            </NavLink>
-             
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  ` relative flex items-center py-3
+                    after:absolute after:left-0 after:-bottom-6 after:h-0.5 after:bg-green-500 after:transition-all after:duration-300
 
-            
+                  ${
+                    isActive
+                      ? "after:w-full"
+                      : "after:w-0 hover:after:w-full"
+                  }
+                  `
+                }
+              >
+                Home
+                <RiArrowDropDownLine className="text-2xl" />
+              </NavLink>
 
-         <div className="
-            absolute right-0 top-full left-0 z-50 w-140  bg-white  shadow-lg opacity-0 invisible
-            translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0" >
-    
-            <div className="grid grid-cols-2 gap-10 px-8 py-6">
+              <div
+                className={`absolute top-18 left-0 w-60 bg-white px-8 py-6 shadow-lg transition-all  duration-300
 
-              <div className="bg-white">
-                <h3 className="mb-1 text-xl font-bold hover:text-green-500 text-gray-900">
-                  Services
-                </h3>
+                  ${
+                    openMenu === "home"
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible translate-y-2 opacity-0"
+                  }
+                `}
+              >
+                <DropdownItem
+                  to="/home-modern"
+                  text="Home Modern"
+                />
 
-                <NavLink to="/business"
-                 className=" group/business flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/business:opacity-100
-                  group-hover/business:translate-x-0"/>
-                  Business Security
-            </NavLink>
+                <DropdownItem
+                  to="/home-classic"
+                  text="Home Classic"
+                />
 
-               <NavLink to="/fire"
-                 className=" group/fire flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/fire:opacity-100
-                  group-hover/fire:translate-x-0"/>
-                  Fire Detection
-            </NavLink>
-
-              <NavLink to="/acess"
-                 className=" group/acess flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/acess:opacity-100
-                  group-hover/acess:translate-x-0"/>
-                  Access Control
-            </NavLink>
-
-              <NavLink to="/alarm"
-                 className=" group/About flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/alarm:opacity-100
-                  group-hover/alarm:translate-x-0"/>
-                  Alarm Systems
-            </NavLink>
-
-            <NavLink to="/cctv"
-                 className=" group/cctv flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/cctv:opacity-100
-                  group-hover/cctv:translate-x-0"/>
-                  CCTV & Video
-            </NavLink>
-            <NavLink to="/About"
-                 className=" group/smart flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/smart:opacity-100
-                  group-hover/smart:translate-x-0"/>
-                  Smart Home
-            </NavLink>
-       
+                <DropdownItem
+                  to="/home-products"
+                  text="Home Products"
+                />
               </div>
-
-              <div className="  w-full">
-                <h3 className="mb-1 text-xl font-bold hover:text-green-500  text-gray-900">
-                  Industries
-                </h3>
-
-                <NavLink to="/Biotech"
-                 className=" group/Biotech flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Biotech:opacity-100
-                  group-hover/Biotech:translate-x-0"/>
-                  Pharmaceutic & Biotech
-            </NavLink>
-             <NavLink to="/Logistics"
-                 className=" group/Logistics flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Logistics:opacity-100
-                  group-hover/Logistics:translate-x-0"/>
-                  Manufacturing & Logistics
-            </NavLink>
-
-             <NavLink to="/Buildings"
-                 className=" group/Buildings flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Buildings:opacity-100
-                  group-hover/Buildings:translate-x-0"/>
-                  Healthcare Buildings
-            </NavLink>
-
-             <NavLink to="/Commercial"
-                 className=" group/Commercial flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Commercial:opacity-100
-                  group-hover/Commercial:translate-x-0"/>
-                  Commercial Buildings
-            </NavLink>
-
-             <NavLink to="/Finance"
-                 className=" group/Finance flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Finance:opacity-100
-                  group-hover/Finance:translate-x-0"/>
-                  Finance & Banking
-            </NavLink>
-
-             <NavLink to="/Office"
-                 className=" group/Office flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-              <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Office:opacity-100
-                  group-hover/Office:translate-x-0"/>
-                  Office Buildings
-            </NavLink>
-
-          
-               
-              </div>
-
             </div>
-  </div>
-      </div> 
 
 
+            <div
+              className="relative group"
+              onMouseEnter={() => setOpenMenu("company")}
+              onMouseLeave={() => setOpenMenu(null)}
+            >
+              <NavLink
+                to="/company"
+                className={({ isActive }) =>
+                  ` relative flex items-center py-3
+                  after:absolute after:left-0 after:-bottom-6 after:h-0.5 after:bg-green-500 after:transition-all after:duration-300
 
-
-      <div className="relative group">
-                <NavLink  to="/news" className={({ isActive }) => 
-                `relative py-2 transition-colors duration-300 after:absolute
-                    after:left-0 after:-bottom-8 flex text-center after:h-0.5 after:bg-green-500 after:transition-all after:duration-300
-                    ${
-                      isActive
-                        ? "text-green-500 after:w-full"
-                        : "after:w-0  hover:after:w-full"
-                    }`
+                  ${
+                    isActive
+                      ? "text-green-500 after:w-full"
+                      : "after:w-0 hover:after:w-full"
                   }
-                >
-                  News & Media<RiArrowDropDownLine className="text-2xl" />
-                </NavLink>
-                <div className=" absolute top-full left-0 w-60 bg-white px-8 py-6 shadow-lg opacity-0 invisible translate-y-2
-                    transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-                  <NavLink to="/blog"
-                    className=" group/blog flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/blog:opacity-100
-                        group-hover/blog:translate-x-0"/>
-                        Blog Grid
-                  </NavLink>
+                  `
+                }
+              >
+                Company
+                <RiArrowDropDownLine className="text-2xl" />
+              </NavLink>
 
-                  <NavLink to="/Standard"
-                    className=" group/Standard flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Standard:opacity-100
-                        group-hover/Standard:translate-x-0"/>
-                        Blog Standard
-                  </NavLink>
+              <div
+                className={` absolute top-18 left-0 w-60  bg-white px-8 py-6 shadow-lg transition-all duration-300
 
-                  <NavLink to="/single"
-                    className=" group/single flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/single:opacity-100
-                        group-hover/single:translate-x-0"/>
-                        Sing post
-                  </NavLink>
+                  ${
+                    openMenu === "company"
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible translate-y-2 opacity-0"
+                  }
+                `}
+              >
+                <DropdownItem
+                  to="/About"
+                  text="About Us"
+                />
 
-                  <NavLink to="/Case"
-                    className=" group/Case flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Case:opacity-100
-                        group-hover/Case:translate-x-0"/>
-                        Case studies  Modern
-                  </NavLink>
+                <DropdownItem
+                  to="/How"
+                  text="How It Works"
+                />
 
-                  <NavLink to="/home-modern"
-                    className=" group/home-modern flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/home-modern:opacity-100
-                        group-hover/home-modern:translate-x-0"/>
-                        Blog Grid
-                  </NavLink>
+                <DropdownItem
+                  to="/leader"
+                  text="Leadership Team"
+                />
+
+                <DropdownItem
+                  to="/Customers"
+                  text="Customers' Reviews"
+                />
+
+                <DropdownItem
+                  to="/location"
+                  text="Our Location"
+                />
+              </div>
+            </div>
+
+
+            <div
+              className="relative group"
+              onMouseEnter={() => setOpenMenu("services")}
+              onMouseLeave={() => setOpenMenu(null)}
+            >
+              <NavLink
+                to="/services"
+                className={({ isActive }) =>
+                  `
+                  relative flex items-center py-3 after:absolute after:left-0 after:-bottom-6 after:h-0.5
+                  after:bg-green-500 after:transition-all after:duration-300
+
+                  ${
+                    isActive
+                      ? "text-green-500 after:w-full"
+                      : "after:w-0 hover:after:w-full"
+                  }
+                  `
+                }
+              >
+                Services & Industries
+                <RiArrowDropDownLine className="text-2xl" />
+              </NavLink>
+
+              {/* Mega menu */}
+
+              <div
+                className={` absolute top-18   left-0 w-120 bg-white shadow-lg transition-all duration-300
+
+                  ${
+                    openMenu === "services"
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible translate-y-2 opacity-0"
+                  }
+                `}
+              >
+                <div className="grid grid-cols-2 gap-10 px-8 py-6">
+
+
+                  <div>
+                    <h3 className="mb-2 pl-6 text-xl font-bold text-gray-900">
+                      Services
+                    </h3>
+
+                    <DropdownItem
+                      to="/business"
+                      text="Business Security"
+                    />
+
+                    <DropdownItem
+                      to="/fire"
+                      text="Fire Detection"
+                    />
+
+                    <DropdownItem
+                      to="/acess"
+                      text="Access Control"
+                    />
+
+                    <DropdownItem
+                      to="/alarm"
+                      text="Alarm Systems"
+                    />
+
+                    <DropdownItem
+                      to="/cctv"
+                      text="CCTV & Video"
+                    />
+
+                    <DropdownItem
+                      to="/smart"
+                      text="Smart Home"
+                    />
                   </div>
 
-                
-              </div>
 
-                <div className="relative group">
-                <NavLink  to="/news" className={({ isActive }) => 
-                `relative py-2 transition-colors duration-300 after:absolute
-                    after:left-0 after:-bottom-8 flex text-center after:h-0.5 after:bg-green-500 after:transition-all after:duration-300
-                    ${
-                      isActive
-                        ? "text-green-500 after:w-full"
-                        : "after:w-0  hover:after:w-full"
-                    }`
-                  }
-                >
-                  Products<RiArrowDropDownLine className="text-2xl" />
-                </NavLink>
-                <div className=" absolute top-full left-0 w-60 bg-white px-8 py-6 shadow-lg opacity-0 invisible translate-y-2
-                    transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0">
-                  <NavLink to="/blog"
-                    className=" group/blog flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/blog:opacity-100
-                        group-hover/blog:translate-x-0"/>
-                        Shop Products
-                  </NavLink>
+                  <div>
+                    <h3 className="mb-2 pl-6 text-xl font-bold text-gray-900">
+                      Industries
+                    </h3>
 
-                  <NavLink to="/Standard"
-                    className=" group/Standard flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Standard:opacity-100
-                        group-hover/Standard:translate-x-0"/>
-                         Single Products
-                  </NavLink>
+                    <DropdownItem
+                      to="/Biotech"
+                      text="Pharmaceutic & Biotech"
+                    />
 
-                  <NavLink to="/cart"
-                    className=" group/single flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/single:opacity-100
-                        group-hover/single:translate-x-0"/>
-                        Cart
-                  </NavLink>
+                    <DropdownItem
+                      to="/Logistics"
+                      text="Manufacturing & Logistics"
+                    />
 
-                  <NavLink to="/Case"
-                    className=" group/Case flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/Case:opacity-100
-                        group-hover/Case:translate-x-0"/>
-                        Case studies  Modern
-                  </NavLink>
+                    <DropdownItem
+                      to="/Buildings"
+                      text="Healthcare Buildings"
+                    />
 
-                  <NavLink to="/home-modern"
-                    className=" group/home-modern flex items-center border-b border-gray-200 py-3  text-gray-400 hover:text-green-500 hover:border-green-500" >
-                    <FaArrowRight className=" mr-2 invisible opacity-0 -translate-x-2 transition-all duration-200 group-hover:visible group-hover/home-modern:opacity-100
-                        group-hover/home-modern:translate-x-0"/>
-                        Blog Grid
-                  </NavLink>
+                    <DropdownItem
+                      to="/Commercial"
+                      text="Commercial Buildings"
+                    />
+
+                    <DropdownItem
+                      to="/Finance"
+                      text="Finance & Banking"
+                    />
+
+                    <DropdownItem
+                      to="/Office"
+                      text="Office Buildings"
+                    />
                   </div>
 
-                
+                </div>
               </div>
+            </div>
 
-        <FaSearch className="cursor-pointer text-2xl transition " />
+            <div
+              className="relative group"
+              onMouseEnter={() => setOpenMenu("news")}
+              onMouseLeave={() => setOpenMenu(null)}
+            >
+              <NavLink
+                to="/news"
+                className={({ isActive }) =>
+                  ` relative flex items-center py-3 after:absolute after:left-0 after:-bottom-6 after:h-0.5
+                  after:bg-green-500 after:transition-all after:duration-300
 
-        <FaShoppingCart className="cursor-pointer text-2xl transition " />
+                  ${
+                    isActive
+                      ? "text-green-500 after:w-full"
+                      : "after:w-0 hover:after:w-full"
+                  }
+                  `
+                }
+              >
+                News & Media
+                <RiArrowDropDownLine className="text-2xl" />
+              </NavLink>
 
-       
-          <Buttons
-                text="Get A Quote"
+              <div
+                className={` absolute top-18 left-0 w-60 bg-white px-8 py-6 shadow-lg transition-all duration-300
+
+                  ${
+                    openMenu === "news"
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible translate-y-2 opacity-0"
+                  }
+                `}
+              >
+                <DropdownItem
+                  to="/blog"
+                  text="Blog Grid"
+                />
+
+                <DropdownItem
+                  to="/Standard"
+                  text="Blog Standard"
+                />
+
+                <DropdownItem
+                  to="/single"
+                  text="Single Post"
+                />
+
+                <DropdownItem
+                  to="/Case"
+                  text="Case Studies Modern"
+                />
+              </div>
+            </div>
+
+
+            <div
+              className="relative group"
+              onMouseEnter={() => setOpenMenu("products")}
+              onMouseLeave={() => setOpenMenu(null)}
+            >
+              <NavLink
+                to="/products"
+                className={({ isActive }) =>
+                  `
+                  relative flex items-center py-3 after:absolute  after:left-0 after:-bottom-6
+                  after:h-0.5 after:bg-green-500 after:transition-all after:duration-300
+
+                  ${
+                    isActive
+                      ? "text-green-500 after:w-full"
+                      : "after:w-0 hover:after:w-full"
+                  }
+                  `
+                }
+              >
+                Products
+                <RiArrowDropDownLine className="text-2xl" />
+              </NavLink>
+
+              <div
+                className={` absolute top-18 left-0 w-60 bg-white px-8 py-6 shadow-lg transition-all  duration-300
+
+                  ${
+                    openMenu === "products"
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible translate-y-2 opacity-0"
+                  }
+                `}>
+                <DropdownItem
+                  to="/shop"
+                  text="Shop Products"
+                />
+
+                <DropdownItem
+                  to="/single"
+                  text="Single Products"
+                />
+
+                <DropdownItem
+                  to="/cart"
+                  text="Cart"
+                />
+              </div>
+            </div>
+
+
+            <FaSearch className="cursor-pointer text-xl xl:text-2xl" />
+
+
+            <FaShoppingCart className="cursor-pointer text-xl xl:text-2xl" />
+
+
+            <Buttons
+              text="Get A Quote"
               size="medium"
               variant="primary"
             />
 
-        <Call />
 
-      </nav>
-      <div className="w-full h-px absolute top-25 bg-[#2E2E2E]"></div>
+            <Amingping
+            icon={<IoIosCall  />}
+            iconColor="text-white"
+            bgColor="bg-green-500"
+            borderColor="border-green-500"
+            iconSize="text-2xl"
+            circleSize="h-10 w-10"
+          />
 
+          </nav>
+
+
+          <div className="flex items-center gap-4 lg:hidden">
+
+
+            <FaSearch
+              className={`
+                cursor-pointer
+                text-xl
+                ${
+                  scrolled
+                    ? "text-gray-900"
+                    : "text-white"
+                }
+              `}
+            />
+
+
+            <button
+              onClick={() => setMobileMenu(!mobileMenu)}
+              className={`
+                text-2xl
+                ${
+                  scrolled
+                    ? "text-gray-900"
+                    : "text-white"
+                }
+              `}
+              aria-label="Toggle menu"
+            >
+              {mobileMenu ? <FaTimes /> : <FaBars />}
+            </button>
+
+          </div>
+
+                  {/* line */}
+          <div
+            className={` absolute left-0 right-0  bottom-0 h-px
+              ${
+                scrolled
+                  ? "bg-gray-200"
+                  : "bg-white/30"
+              }
+            `}
+          />
+
+        </div>
+      </div>
+
+    {/* mobel */}
+
+      <div
+        className={` lg:hidden overflow-y-auto transition-all duration-300 bg-white shadow-xl
+
+          ${
+            mobileMenu
+              ? "max-h-[calc(100vh-5rem)] opacity-100"
+              : "max-h-0 opacity-0"
+          }
+        `}
+      >
+
+        <div className="px-6 py-6">
+
+
+          <MobileMenuItem
+            title="Home"
+            dropdown="home"
+            mobileDropdown={mobileDropdown}
+            toggleMobileDropdown={toggleMobileDropdown}/>
+
+          {mobileDropdown === "home" && (
+            <MobileSubMenu>
+              <MobileLink
+                to="/home-modern"
+                text="Home Modern"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/home-classic"
+                text="Home Classic"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/home-products"
+                text="Home Products"
+                closeMobileMenu={closeMobileMenu} />
+            </MobileSubMenu>
+          )}
+
+
+          <MobileMenuItem
+            title="Company"
+            dropdown="company"
+            mobileDropdown={mobileDropdown}
+            toggleMobileDropdown={toggleMobileDropdown}
+          />
+
+          {mobileDropdown === "company" && (
+            <MobileSubMenu>
+
+              <MobileLink
+                to="/About"
+                text="About Us"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/How"
+                text="How It Works"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/leader"
+                text="Leadership Team"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Customers"
+                text="Customers' Reviews"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/location"
+                text="Our Location"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+            </MobileSubMenu>
+          )}
+
+
+          <MobileMenuItem
+            title="Services & Industries"
+            dropdown="services"
+            mobileDropdown={mobileDropdown}
+            toggleMobileDropdown={toggleMobileDropdown}
+          />
+
+          {mobileDropdown === "services" && (
+            <MobileSubMenu>
+
+              <p className="px-3 pt-2 pb-2 font-bold text-gray-900">
+                Services
+              </p>
+
+              <MobileLink
+                to="/business"
+                text="Business Security"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/fire"
+                text="Fire Detection"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/acess"
+                text="Access Control"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/alarm"
+                text="Alarm Systems"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/cctv"
+                text="CCTV & Video"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/smart"
+                text="Smart Home"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <p className="px-3 pt-5 pb-2 font-bold text-gray-900">
+                Industries
+              </p>
+
+              <MobileLink
+                to="/Biotech"
+                text="Pharmaceutic & Biotech"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Logistics"
+                text="Manufacturing & Logistics"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Buildings"
+                text="Healthcare Buildings"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Commercial"
+                text="Commercial Buildings"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Finance"
+                text="Finance & Banking"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Office"
+                text="Office Buildings"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+            </MobileSubMenu>
+          )}
+
+
+          <MobileMenuItem
+            title="News & Media"
+            dropdown="news"
+            mobileDropdown={mobileDropdown}
+            toggleMobileDropdown={toggleMobileDropdown}
+          />
+
+          {mobileDropdown === "news" && (
+            <MobileSubMenu>
+
+              <MobileLink
+                to="/blog"
+                text="Blog Grid"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Standard"
+                text="Blog Standard"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/single"
+                text="Single Post"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/Case"
+                text="Case Studies Modern"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+            </MobileSubMenu>
+          )}
+
+
+          <MobileMenuItem
+            title="Products"
+            dropdown="products"
+            mobileDropdown={mobileDropdown}
+            toggleMobileDropdown={toggleMobileDropdown}
+          />
+
+          {mobileDropdown === "products" && (
+            <MobileSubMenu>
+
+              <MobileLink
+                to="/shop"
+                text="Shop Products"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/single"
+                text="Single Products"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+              <MobileLink
+                to="/cart"
+                text="Cart"
+                closeMobileMenu={closeMobileMenu}
+              />
+
+            </MobileSubMenu>
+          )}
+
+          {/* MOBILE ACTIONS */}
+
+          <div className="mt-6 flex flex-col gap-4 border-t border-gray-200 pt-6">
+
+            <div className="flex items-center gap-5">
+
+              <FaShoppingCart className="text-xl text-gray-900" />
+
+              <Amingping 
+              icon={<IoIosCall  />}
+              iconColor="text-white"
+              bgColor="bg-green-500"
+              borderColor="border-green-500"
+              iconSize="text-2xl"
+              circleSize="h-10 w-10"
+            />
+
+            </div>
+
+            <Buttons
+              text="Get A Quote"
+              size="medium"
+              variant="primary"
+            />
+
+          </div>
+
+        </div>
+      </div>
+
+    </header>
+  );
+};
+
+
+const DropdownItem = ({ to, text }) => {
+  return (
+    <NavLink
+      to={to}
+      className="
+        group/item
+        flex
+        items-center
+        border-b
+        border-gray-200
+        py-3
+        text-gray-400
+        transition-colors
+        hover:border-green-500
+        hover:text-green-500
+      "
+    >
+      <FaArrowRight
+        className="
+          mr-2
+          invisible
+          -translate-x-2
+          opacity-0
+          transition-all
+          duration-200
+
+          group-hover/item:visible
+          group-hover/item:translate-x-0
+          group-hover/item:opacity-100
+        "
+      />
+
+      {text}
+    </NavLink>
+  );
+};
+
+
+
+const MobileMenuItem = ({
+  title,
+  dropdown,
+  mobileDropdown,
+  toggleMobileDropdown,
+}) => {
+  const isOpen = mobileDropdown === dropdown;
+
+  return (
+    <button
+      onClick={() => toggleMobileDropdown(dropdown)}
+      className="
+        flex
+        w-full
+        items-center
+        justify-between
+        border-b
+        border-gray-200
+        py-4
+        text-left
+        font-bold
+        text-gray-900
+      "
+    >
+      <span>{title}</span>
+
+      <RiArrowDropDownLine
+        className={`
+          text-2xl
+          transition-transform
+          duration-300
+
+          ${isOpen ? "rotate-180" : ""}
+        `}
+      />
+    </button>
+  );
+};
+
+
+
+
+const MobileSubMenu = ({ children }) => {
+  return (
+    <div className="border-b border-gray-200 bg-gray-50 px-3 py-2">
+      {children}
     </div>
+  );
+};
+
+
+
+
+const MobileLink = ({to,text,closeMobileMenu,
+}) => {
+  return (
+    <NavLink
+      to={to}
+      onClick={closeMobileMenu}
+      className=" flex items-center gap-2 border-b border-gray-200 py-3 text-sm text-gray-500 transition-colors hover:text-green-500">
+      <FaArrowRight className="text-xs" />
+      {text}
+    </NavLink>
   );
 };
 
